@@ -6,9 +6,11 @@ const fs = require('fs');
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 const callBack = function(err, result) {
-	console.log('Errors:', err);
 	let myResult = JSON.parse(result.body);
-	console.log('Result:');
+	console.log(myResult);
+	if (myResult.message === 'Not Found') {
+		throw err;
+	}
 	myResult.forEach(function(contributor) {
 		downloadImageByURL(contributor.avatar_url, contributor.login);
 	});
@@ -49,7 +51,7 @@ const repos = function getRepoContributors(repoOwner, repoName, cb) {
 		},
 	};
 	request(options, function(err, body) {
-		cb(err, body);
+		cb('Error retrieving repo. Try again.', body);
 	});
 };
 
