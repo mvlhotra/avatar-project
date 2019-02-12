@@ -1,3 +1,15 @@
+/* =============================================================================
+ *
+ *														Github Avatar Generator
+ *						Created by: Nik Malhotra for Lighthouse Labs on 02/11/19
+ *
+ * 																	Purpose:
+ * 						User specifies a repository owner and repository name.
+ * 			Images are exported to an avatar folder in the user's current dir.
+ *
+ * =============================================================================
+ */
+
 const myArgs = process.argv.slice(2);
 const request = require('request');
 const token = require('./secrets.js');
@@ -30,7 +42,7 @@ const folder = function makeNewDirectory(dirPath) {
 	}
 };
 
-// tasks
+// main tasks
 
 function downloadImageByURL(url, filePath) {
 	folder('./avatars');
