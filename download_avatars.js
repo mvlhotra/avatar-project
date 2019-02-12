@@ -1,34 +1,56 @@
 const myArgs = process.argv.slice(2);
-var request = require('request');
-var token = require('./secrets.js');
+const request = require('request');
+const token = require('./secrets.js');
+const fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
-var errors = function(err, result) {
-  console.log("Errors:", err);
-  const myResult = JSON.parse(result);
-  console.log("Result:");
-  myResult.forEach(function(contributor){
-    console.log(contributor.avatar_url);
-  });
+const callBack = function(err, result) {
+	console.log('Errors:', err);
+	let myResult = JSON.parse(result.body);
+	console.log('Result:');
+	myResult.forEach(function(contributor) {
+		downloadImageByURL(contributor.avatar_url, contributor.login);
+	});
 };
 
-var repos = function getRepoContributors(repoOwner,repoName,cb){
-  var options = {
-    url : `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
-    headers : {
-      'User-Agent' : 'request',
-      'Authorization': token.GITHUB_TOKEN
-    }
-  };
-  request(options, function(err, res, body){
-    cb(err, body);
-  });
+const folder = function makeNewDirectory(dirPath) {
+	if (!fs.existsSync(`${dirPath}`)) {
+		fs.mkdir(`${dirPath}`, function(err) {
+			if (err) {
+				throw err;
+			}
+		});
+	}
 };
 
+function downloadImageByURL(url, filePath) {
+	folder('./avatars');
+	request
+		.get(url)
+		.on('error', function(err) {
+			throw err;
+		})
+		.on('response', function(response) {
+			console.log('Downloading...');
+		})
+		.pipe(fs.createWriteStream(`./avatars/${filePath}.png`))
+		.on('end', function() {
+			console.log('Download complete!');
+		});
+}
 
-repos('jquery','jquery',errors);
-// create avatars folder in the current directory
-// avatar folder should have images corresponding to the avatars of the contributors of the repo
-// each image should be named: "fname.png"
+const repos = function getRepoContributors(repoOwner, repoName, cb) {
+	const options = {
+		url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
+		headers: {
+			'User-Agent': 'request',
+			Authorization: token.GITHUB_TOKEN,
+		},
+	};
+	request(options, function(err, body) {
+		cb(err, body);
+	});
+};
 
+repos(myArgs[0], myArgs[1], callBack);
