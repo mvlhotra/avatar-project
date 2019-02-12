@@ -84,3 +84,6 @@ secrets.js
 
 # avatars
 ./avatars/
+
+#env
+.env

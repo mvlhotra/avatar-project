@@ -13,7 +13,7 @@
 // variable init and introduction
 const myArgs = process.argv.slice(2);
 const request = require('request');
-const token = require('./secrets.js');
+require('dotenv').config();
 const fs = require('fs');
 
 // helpers
@@ -51,12 +51,12 @@ function downloadImageByURL(url, filePath) {
 		.on('error', function(err) {
 			throw err;
 		})
-		.on('response', function(response) {
+		.on('response', function() {
 			console.log('Downloading...');
 		})
 		.pipe(fs.createWriteStream(`./avatars/${filePath}.png`))
-		.on('end', function() {
-			console.log('Download complete!');
+		.on('finish', function() {
+			return;
 		});
 }
 //		retrieve repo object
@@ -65,11 +65,11 @@ const repos = function getRepoContributors(repoOwner, repoName, cb) {
 		url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
 		headers: {
 			'User-Agent': 'request',
-			Authorization: token.GITHUB_TOKEN,
+			Authorization: process.env.GITHUB_TOKEN,
 		},
 	};
 	request(options, function(err, body) {
-		cb('Error retrieving repo. Try again.', body);
+		cb(err, body);
 	});
 };
 
