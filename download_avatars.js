@@ -10,16 +10,15 @@
  * =============================================================================
  */
 
+// variable init and introduction
 const myArgs = process.argv.slice(2);
 const request = require('request');
 const token = require('./secrets.js');
 const fs = require('fs');
 
-console.log('Welcome to the GitHub Avatar Downloader!');
-
 // helpers
 
-// retrieve and parse the data retrieved from JSON.
+// 		retrieve and parse the data retrieved from JSON.
 const callBack = function(err, result) {
 	let myResult = JSON.parse(result.body);
 	if (myResult.message === 'Not Found') {
@@ -30,7 +29,7 @@ const callBack = function(err, result) {
 	});
 };
 
-// create a new folder directory
+// 			create a new folder directory
 
 const folder = function makeNewDirectory(dirPath) {
 	if (!fs.existsSync(`${dirPath}`)) {
@@ -44,6 +43,7 @@ const folder = function makeNewDirectory(dirPath) {
 
 // main tasks
 
+// 		image downloader
 function downloadImageByURL(url, filePath) {
 	folder('./avatars');
 	request
@@ -59,7 +59,7 @@ function downloadImageByURL(url, filePath) {
 			console.log('Download complete!');
 		});
 }
-
+//		retrieve repo object
 const repos = function getRepoContributors(repoOwner, repoName, cb) {
 	const options = {
 		url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
@@ -73,4 +73,6 @@ const repos = function getRepoContributors(repoOwner, repoName, cb) {
 	});
 };
 
+// main function execution
+console.log('Welcome to the GitHub Avatar Downloader!');
 repos(myArgs[0], myArgs[1], callBack);
