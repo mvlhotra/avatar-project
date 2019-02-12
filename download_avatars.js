@@ -5,9 +5,11 @@ const fs = require('fs');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
+// helpers
+
+// retrieve and parse the data retrieved from JSON.
 const callBack = function(err, result) {
 	let myResult = JSON.parse(result.body);
-	console.log(myResult);
 	if (myResult.message === 'Not Found') {
 		throw err;
 	}
@@ -15,6 +17,8 @@ const callBack = function(err, result) {
 		downloadImageByURL(contributor.avatar_url, contributor.login);
 	});
 };
+
+// create a new folder directory
 
 const folder = function makeNewDirectory(dirPath) {
 	if (!fs.existsSync(`${dirPath}`)) {
@@ -25,6 +29,8 @@ const folder = function makeNewDirectory(dirPath) {
 		});
 	}
 };
+
+// tasks
 
 function downloadImageByURL(url, filePath) {
 	folder('./avatars');
